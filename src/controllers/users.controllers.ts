@@ -1,33 +1,15 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+// users/users.controller.ts
+import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from '../services';
-import { User } from '../db/entities';
 
 @Controller('users')
-export class UserController {
+export class UsersController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  async getAllUsers(): Promise<User[]> {
-    return this.userService.getAllUsers();
-  }
-
-  @Get(':id')
-  async getUserById(@Param('id') id: number): Promise<User> {
-    return this.userService.getUserById(id);
-  }
-
-  @Post()
-  async createUser(@Body('name') name: string): Promise<User> {
-    return this.userService.createUser(name);
-  }
-
-  @Put(':id')
-  async updateUser(@Param('id') id: number, @Body('name') name: string): Promise<User> {
-    return this.userService.updateUser(id, name);
-  }
-
-  @Delete(':id')
-  async deleteUser(@Param('id') id: number): Promise<void> {
-    return this.userService.deleteUser(id);
+  @Post('register')
+  async register(@Body() body: { username: string; password: string }) {
+    const { username, password } = body;
+    const user = await this.userService.createUser(username, password);
+    return { message: 'User registered successfully', user };
   }
 }
